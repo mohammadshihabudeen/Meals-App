@@ -1,9 +1,24 @@
-import { View, Text, Image, StyleSheet, FlatList, ScrollView } from "react-native"
+import { View, Text, Image, StyleSheet, FlatList, ScrollView, Button } from "react-native"
 import { MEALS } from "../data/dummy-data"
 import ListItems from "../components/ListItems"
-export default MealdetailScreen = ({ route }) => {
+import { useLayoutEffect } from "react"
+import IconButton from "../components/IconButton"
+export default MealdetailScreen = ({ route ,navigation }) => {
     mealId = route.params.mealId
     const meal = MEALS.find((m) => m.id === mealId)
+    const addFavoritesHandler = () =>{
+        console.log("pressed")
+    }
+    useLayoutEffect(()=>{
+        navigation.setOptions({
+            headerRight:()=>{
+                return <IconButton color={"#ffbbbb"}
+                name={"star"}
+                onPress={addFavoritesHandler}
+                />
+            }
+        })
+    },[navigation,addFavoritesHandler]);
     return <ScrollView style={styles.mealItem}>
         <Text style={styles.heading}>
             {meal.title}
