@@ -1,9 +1,10 @@
 import { View, Text, Image, StyleSheet, FlatList, ScrollView, Button } from "react-native"
 import { MEALS } from "../data/dummy-data"
 import ListItems from "../components/ListItems"
-import { useContext, useLayoutEffect } from "react"
+import { useContext, useLayoutEffect, useState } from "react"
 import IconButton from "../components/IconButton"
 import { FavouritesContext } from "../store/context/favourites-context"
+import ToastMessage from "../components/ToastMessage"
 export default MealdetailScreen = ({ route ,navigation }) => {
     mealId = route.params.mealId
     const favouriteMealsCtx = useContext(FavouritesContext);
@@ -12,17 +13,20 @@ export default MealdetailScreen = ({ route ,navigation }) => {
         mealIsFav ? favouriteMealsCtx.removeFavourite(mealId):
         favouriteMealsCtx.addFavourite(mealId)
     }
-    useLayoutEffect(()=>{
+    const [visible,setVisible] = useState(false);
+    useLayoutEffect(() => {
+        setVisible(true);
         navigation.setOptions({
-            headerRight:()=>{
-                return <IconButton color={"#ffbbbb"}
-                name={mealIsFav ? 'star' : 'star-outline'}
-                onPress={addFavoritesHandler}
-                />
-            }
-        })
-    },[navigation,addFavoritesHandler]);
-    
+          headerRight: () => (
+            <IconButton
+              color="#ffbbbb"
+              name={mealIsFav ? 'star' : 'star-outline'}
+              onPress={addFavoritesHandler}
+            />
+          ),
+        });
+      }, [navigation, mealIsFav, addFavoritesHandler]);
+
     const meal = MEALS.find((m) => m.id === mealId)
     return <ScrollView style={styles.mealItem}>
         <Text style={styles.heading}>
@@ -44,6 +48,11 @@ export default MealdetailScreen = ({ route ,navigation }) => {
                 <ListItems meal={meal.steps}/>
             </View>
         </View>
+        <ToastMessage
+      message={mealIsFav ? 'added to favourites' :'removed from favourites'}
+      visible={visible}
+      setVisible={setVisible}
+    />
     </ScrollView>
 }
 
